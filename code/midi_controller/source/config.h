@@ -13,15 +13,18 @@
 #define BB_END							3
 
 struct ConfigData {
-	unsigned char lcdBrightness;
-	unsigned char buttonBehavior[16][NUMBER_CONTROL_BUTTONS];
-}
+	uint8_t lcdBrightness;
+	uint8_t buttonBehavior[16][NUMBER_CONTROL_BUTTONS];
+};
 
 class Config {
+public:	
 	Config(void);
 	void load(void);
 	void save(void);
 	ConfigData data;
 };
+
+extern Config config;
 
 #endif

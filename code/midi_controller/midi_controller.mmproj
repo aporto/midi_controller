@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mm_project current="1" serial_port="COM5" programmer="" board="Arduino Duemilanove w/ ATmega328" includePaths=";$(LIBRARIES)/ardumidi;$(LIBRARIES)/LiquidCrystal;$(LIBRARIES)/EEPROM" libPaths="" srcPaths="" libs="" useCodeAutomation="1" linkPrintfVersion="1665861664" serialPortSpeed="9600" isLibrary="0">
+<mm_project current="1" serial_port="COM4" programmer="" board="Arduino Mega (ATmega1280)" includePaths=";$(LIBRARIES)/ardumidi;$(LIBRARIES)/LiquidCrystal;$(LIBRARIES)/EEPROM" libPaths="" srcPaths="" libs="" useCodeAutomation="1" linkPrintfVersion="1665861664" serialPortSpeed="9600" isLibrary="0">
     <files>
         <file name="midi_controller.cpp" open="yes"/>
         <file name="mariamole_auto_generated.h" open="no"/>
-        <file name="ardumidi.cpp" open="yes"/>
-        <file name="ardumidi.h" open="yes"/>
-        <file name="menu.cpp" open="yes"/>
-        <file name="menu.h" open="yes"/>
-        <file name="definitions.h.h" open="yes"/>
-        <file name="config.cpp" open="yes"/>
+        <file name="ardumidi.cpp" open="no"/>
+        <file name="ardumidi.h" open="no"/>
+        <file name="menu.cpp" open="no"/>
+        <file name="menu.h" open="no"/>
+        <file name="definitions.h" open="yes"/>
+        <file name="config.cpp" open="no"/>
         <file name="config.h" open="yes"/>
+        <file name="display.cpp" open="no"/>
+        <file name="display.h" open="no"/>
+        <file name="utils.cpp" open="no"/>
+        <file name="utils.h" open="no"/>
+        <file name="midi_definitions.h" open="yes"/>
     </files>
     <externals>
         <external name="LiquidCrystal/LiquidCrystal.cpp" open="no"/>

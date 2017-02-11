@@ -29,6 +29,8 @@
 #include <Arduino.h>
 
 /*--MARIMOLE-DEF_BEGIN--*/
+void loop();
+void setup();
 /*--MARIMOLE-DEF_END--*/
 
 #include <LiquidCrystal.h>
