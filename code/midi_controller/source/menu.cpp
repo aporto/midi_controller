@@ -13,20 +13,20 @@ void Menu::execute(void)
 {
 	lcd.clear();	
 	lcd.print("Entering menu...");
-	Serial.println("Entrando");
+	//Serial.println("Entrando");
 	int lastPressedPin = 0;
 	while (digitalRead(PIN_MENU) == 0) {
 		delay(1);
 	}	
 	menuOption = 0;
-	Serial.println("Entrou");
+	//Serial.println("Entrou");
 	refreshScreen();
 	
 	//return;
 	
 	while (true) {		
 		if (debounce(PIN_UP)) {
-			Serial.println("up");
+			//Serial.println("up");
 			lastPressedPin = PIN_UP;
 			menuOption++;			
 			if (menuOption >= 16 * (NUMBER_CONTROL_BUTTONS) + OPTION_FIRST_PIN_SETUP) {
@@ -35,7 +35,7 @@ void Menu::execute(void)
 			//refreshScreen();
 		}
 		if (debounce(PIN_DOWN)) {
-			Serial.println("down");
+			//Serial.println("down");
 			lastPressedPin = PIN_DOWN;
 			menuOption--;			
 			if (menuOption < 0) {
@@ -48,12 +48,12 @@ void Menu::execute(void)
 			lastPressedPin = PIN_MENU;
 			config.save();
 			lcd.clear();
-			Serial.println("Saiu");
+			//Serial.println("Saiu");
 			return;
 		}
 		
 		if (debounce(PIN_SELECT)) {
-			Serial.println("Select");
+			//Serial.println("Select");
 			lastPressedPin = PIN_SELECT;
 			if (menuOption == OPTION_LCD_BRIGHTNESS) {
 				config.data.lcdBrightness += 5;
@@ -71,20 +71,20 @@ void Menu::execute(void)
 		}
 		
 		if (lastPressedPin != 0) {
-			Serial.println("call refresh");
+			//Serial.println("call refresh");
 			refreshScreen();			
 			while (digitalRead(lastPressedPin) == 0) {
 				delay(1);
 			}
 			lastPressedPin = 0;
-			Serial.println("continue");
+			//Serial.println("continue");
 		}
 	}
 }
 
 void Menu::refreshScreen(void)
 {
-	Serial.println("Refresh");
+	//Serial.println("Refresh");
 	//return;
 	analogWrite(LCD_LED_PIN, 255 * config.data.lcdBrightness / 100);
 	lcd.clear();
@@ -101,13 +101,13 @@ void Menu::refreshScreen(void)
 		int channel = (menuOption - OPTION_FIRST_PIN_SETUP) / NUMBER_CONTROL_BUTTONS;
 		int button = (menuOption - OPTION_FIRST_PIN_SETUP) % NUMBER_CONTROL_BUTTONS;
 		
-		Serial.print("::");
-		Serial.print(menuOption);
-		Serial.print(",");
-		Serial.print(channel);
-		Serial.print(",");
-		Serial.print(button);
-		Serial.println(" ");
+		//Serial.print("::");
+		//Serial.print(menuOption);
+		//Serial.print(",");
+		//Serial.print(channel);
+		//Serial.print(",");
+		//Serial.print(button);
+		//Serial.println(" ");
 		
 		lcd.print("Button ");					
 		lcd.print((int)channel + 1);

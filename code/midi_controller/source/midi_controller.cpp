@@ -27,11 +27,13 @@
 #include "menu.h"
 #include "config.h" 
 #include "utils.h" 
-
+#include "ardumidi.h"
  
 LiquidCrystal lcd(LCD_RS, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7); //configura os pinos do arduino para se comunicar com o lcd
-unsigned char pinButton[NUMBER_CONTROL_BUTTONS];
-char oldButtonValue[NUMBER_CONTROL_BUTTONS];
+//unsigned char pinButton[NUMBER_CONTROL_BUTTONS];
+char oldButtonValue[16][NUMBER_CONTROL_BUTTONS];
+//char oldButtonValue[16][NUMBER_CONTROL_BUTTONS];
+char oldSwitchValue[16][NUMBER_CONTROL_BUTTONS];
 int oldAnalogValue[NUMBER_CONTROL_ANALOGS];
 unsigned char channel = 0;
 
@@ -49,8 +51,9 @@ void checkAndSendSensors(void)
 	//int oldValue = -1;
 
 
-	t_midiMsg msg;  
-	for (int i=0; i < NUMBER_CONTROL_ANALOGS; i++) {
+	// Analogs desabilitados. 
+	//TODO colocar comentario para nao deixar analog flutuante
+	/* for (int i=0; i < NUMBER_CONTROL_ANALOGS; i++) {
 		int sensorValue = analogRead(PIN_FIRST_ANALOG + i);
 		if (sensorValue != oldAnalogValue[i]) {
 			oldAnalogValue[i] = sensorValue;
@@ -59,7 +62,7 @@ void checkAndSendSensors(void)
 			//msg.data1  = i; //controllers[0];                  // Get the controller number from the array above.
 			//msg.data2  = sensorValue / 8;                    // Get the value of the analog input from the analogVal array.
 			//Serial.write((uint8_t *)&msg, sizeof(msg));    // Send the MIDI message.
-			midi_controller_change(channel, i /*controllers[0]*/, sensorValue/8);
+			midi_controller_change(channel, i , sensorValue/8);
 			
 			lcd.setCursor(0,1);
 			lcd.print("Analog ");
@@ -67,72 +70,63 @@ void checkAndSendSensors(void)
 			lcd.print(" ");
 			lcd.print((int)sensorValue/8);
 		}
-	}
+	} */
+	
 	for (int i=0; i < NUMBER_CONTROL_BUTTONS; i++) {
-		int sensorValue = !(digitalRead(PIN_FIRST_BUTTON + i));
-		if (sensorValue != oldButtonValue[i]) {
-			if (config.data.buttonBehavior[channel] == BB_CONTROLLER_SWITCH) {			
-				if (sensorValue != oldButtonValue[i]) {
+		int sensorValue = !(digitalRead(PIN_FIRST_LED_BUTTON + i * 2 + 1));
+		if (sensorValue != oldButtonValue[channel][i]) {			
+			if (config.data.buttonBehavior[channel][i] == BB_CONTROLLER_SWITCH) {			
+				if (sensorValue == 1) {
+					oldSwitchValue[channel][i] = ! (oldSwitchValue[channel][i]);
+					lcd.setCursor(0,1);
+					lcd.print("                ");
 					lcd.setCursor(0,1);
 					lcd.print("Button ");
-					lcd.print((int)i + NUMBER_CONTROL_ANALOGS);
-					lcd.print(" ");
-					midi_controller_change(channel, i + NUMBER_CONTROL_ANALOGS, sensorValue);				
+					lcd.print((int)i + 1);							
+					if (oldSwitchValue[channel][i]) {
+						lcd.print(" SW ON");
+						digitalWrite(PIN_FIRST_LED_BUTTON + i * 2, 1);
+						//Serial.println("on 1");				
+						midi_controller_change(channel, i + NUMBER_CONTROL_ANALOGS, 127);			
+						//Serial.println("on 2");				
+					} else {
+						lcd.print(" SW OFF");
+						digitalWrite(PIN_FIRST_LED_BUTTON + i * 2, 0);
+						//Serial.println("off 1");				
+						midi_controller_change(channel, i + NUMBER_CONTROL_ANALOGS, 0);			
+						//Serial.println("off 2");				
+					}					
 				}
 			} else {
 				if (config.data.buttonBehavior[channel][i] == BB_CONTROLLER_PUSH_BUTTON) {
-					if (sensorValue != oldButtonValue[i]) {
+					lcd.setCursor(0,1);
+					lcd.print("                ");
 					lcd.setCursor(0,1);
 					lcd.print("Button ");
-					lcd.print((int)i + NUMBER_CONTROL_ANALOGS);
+					lcd.print((int)i + 1);
 					lcd.print("PB ");
-					lcd.print((int)sensorValue);					
+					lcd.print((int)sensorValue);		
+					digitalWrite(PIN_FIRST_LED_BUTTON + i * 2, sensorValue);			
 					midi_controller_change(channel, i + NUMBER_CONTROL_ANALOGS, sensorValue);				
-				} else if (config.data.buttonBehavior[channel] == BB_BB_INSTRUMENT_NOTE) {
-				
-								} else {
-						lcd.print("Note");
-					}
-			}
-		oldButton[i] = sensorValue;			
-		} else {
-				
-				
-				} else if (config.data.buttonBehavior[channel] == BB_CONTROLLER_SWITCH) {
-					if (oldButton[i] == 1) {
-						midi_controller_change(channel, i + NUMBER_CONTROL_ANALOGS, 0);
-						lcd.print("SW ON" );
+				} else if (config.data.buttonBehavior[channel][i] == BB_INSTRUMENT_NOTE) {
+					lcd.setCursor(0,1);
+					lcd.print("                ");
+					lcd.setCursor(0,1);
+					lcd.print("Button ");
+					lcd.print((int)i + 1);										
+					digitalWrite(PIN_FIRST_LED_BUTTON + i * 2, sensorValue);			
+					if (sensorValue) {
+						lcd.print("Note ON");												
+						midi_note_on(channel, i+80, 45);
 					} else {
-						midi_controller_change(channel, i + NUMBER_CONTROL_ANALOGS, 0);
-						lcd.print("SW OFF" );
-					}				
+						lcd.print("Note OFF");
+						midi_note_off(channel, i+80, 45);
+					}												
 				}
-				
-				
 			}
+			oldButtonValue[channel][i] = sensorValue;	
 		}
 	}
-	oldValue = sensorValue;
-  // play notes from F#-0 (0x1E) to F#-5 (0x5A):
-  /*for (int note = 0x1E; note < 0x5A; note ++) {
-    //Note on channel 1 (0x90), some note value (note), middle velocity (0x45):
-    noteOn(0x90, note, 0x45);
-    delay(100);
-    //Note on channel 1 (0x90), some note value (note), silent velocity (0x00):
-    noteOn(0x90, note, 0x00);   
-    delay(100);
-  }* /
-	delay(20);
-}
-/*
-//  plays a MIDI note.  Doesn't check to see that
-//  cmd is greater than 127, or that data values are  less than 127:
-void noteOn(int cmd, int pitch, int velocity) {
-  Serial.write(cmd);
-  Serial.write(pitch);
-  Serial.write(velocity);
-}
-*/
 }
 
 void setup() {	
@@ -143,13 +137,23 @@ void setup() {
 	Serial.begin(115200);
 	
 	for (int i=0; i < NUMBER_CONTROL_BUTTONS; i++) {
-		pinButton[i] = PIN_FIRST_BUTTON + i;
-		pinMode(pinButton[i], INPUT_PULLUP);
-		oldButtonValue[i] = -1;
+		//pinButton[i] = PIN_FIRST_BUTTON + i;
+		pinMode(PIN_FIRST_LED_BUTTON + i * 2, OUTPUT);
+		pinMode(PIN_FIRST_LED_BUTTON + i * 2 + 1, INPUT_PULLUP);
+		//Serial.print("Led ");		
+		//Serial.print(PIN_FIRST_LED_BUTTON + i * 2);		
+		//Serial.print(" button ");		
+		//Serial.println(PIN_FIRST_LED_BUTTON + i * 2 + 1);				
+		for (int c=0; c<16; c++) {
+			oldButtonValue[c][i] = 0;
+			oldSwitchValue[c][i] = 0;
+		}
 	}
 	
 	for (int i=0; i < NUMBER_CONTROL_ANALOGS; i++) {
-		oldAnalogValue[i] = -1;
+		for (int c=0; c<16; c++) {
+			oldAnalogValue[i] = -1;
+		}
 	}
 	
 	pinMode(PIN_MENU, INPUT_PULLUP);
@@ -196,10 +200,13 @@ void loop() {
 		}
 	}
 	lcd.setCursor(0,0);
-	lcd.print("-> Channel");
-	lcd.print(int)channel + 1);
+	lcd.print("-> Channel ");
+	lcd.print((int)channel + 1);
+	lcd.print("  ");
 	
 	checkAndSendSensors();
+	//digitalWrite(42, 1);
+	//Serial.println(digitalRead(43));
 	
 	digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
 	delay(100);                       // wait for a second

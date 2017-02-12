@@ -3,9 +3,9 @@
     <files>
         <file name="midi_controller.cpp" open="yes"/>
         <file name="mariamole_auto_generated.h" open="no"/>
-        <file name="ardumidi.cpp" open="no"/>
+        <file name="ardumidi.cpp" open="yes"/>
         <file name="ardumidi.h" open="no"/>
-        <file name="menu.cpp" open="no"/>
+        <file name="menu.cpp" open="yes"/>
         <file name="menu.h" open="no"/>
         <file name="definitions.h" open="yes"/>
         <file name="config.cpp" open="no"/>
