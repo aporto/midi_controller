@@ -115,7 +115,7 @@ void checkAndSendSensors(void)
 					lcd.print("Button ");
 					lcd.print((int)i + 1);										
 					digitalWrite(PIN_FIRST_LED_BUTTON + i * 2, sensorValue);			
-					if (sensorValue) {
+					if (sensorvalue) {
 						lcd.print("Note ON");												
 						midi_note_on(channel, i+80, 45);
 					} else {
