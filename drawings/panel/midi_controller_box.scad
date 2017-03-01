@@ -1,4 +1,7 @@
 // box walls
+
+circleRes = 24;
+
 module walls() {
     difference() {
         cube([200,140,55]);
@@ -17,9 +20,9 @@ module walls() {
     translate([190,5,0])
     cube ([5,5,35.5]);
     translate([5,130,0])
-    cube ([5,5,55.5]);
+    cube ([5,5,53]);
     translate([190,130,0])
-    cube ([5,5,55.5]);
+    cube ([5,5,53]);
 }
 
 difference() {
@@ -27,13 +30,13 @@ difference() {
 
     // screw holes
     translate([5,5,20])
-    cylinder(r1=1.5, r2=1.5, h=165, $fn=24);         
+    cylinder(r1=1.5, r2=1.5, h=165, $fn=circleRes);         
     translate([195,5,20])
-    cylinder(r1=1.5, r2=1.5, h=165, $fn=24);         
+    cylinder(r1=1.5, r2=1.5, h=165, $fn=circleRes);         
     translate([5,135,20])
-    cylinder(r1=1.5, r2=1.5, h=165, $fn=24);         
+    cylinder(r1=1.5, r2=1.5, h=165, $fn=circleRes);         
     translate([195,135,20])
-    cylinder(r1=1.5, r2=1.5, h=165, $fn=24);     
+    cylinder(r1=1.5, r2=1.5, h=165, $fn=circleRes);     
     
     // arduino usb connector
     translate([90,100,6])
